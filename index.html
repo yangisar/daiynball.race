@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DAYINBALL RACE: LINCOLN EDITION</title>
+    <title>DAYINBALL: ALMATY DRIFT</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rubik+Glitch&display=swap');
 
@@ -11,17 +11,18 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #202020;
+            background-color: #111;
             font-family: 'Permanent Marker', cursive, sans-serif;
             touch-action: none;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         #gameContainer {
             position: relative;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 40%, #505050 40%, #202020 100%);
+            background: #000;
         }
 
         canvas {
@@ -39,9 +40,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.92);
             color: #FFD700;
-            z-index: 10;
+            z-index: 20;
             text-align: center;
         }
 
@@ -50,34 +51,35 @@
             font-size: 5rem;
             margin: 0;
             color: #FFF;
-            text-shadow: 5px 5px #000, -2px -2px #FF00FF;
+            text-shadow: 4px 4px #FF0000;
             transform: rotate(-2deg);
-            letter-spacing: 4px;
+            letter-spacing: 2px;
         }
 
         p {
-            font-size: 1.5rem;
-            color: #00FF00;
-            text-shadow: 1px 1px #000;
+            font-size: 1.4rem;
+            color: #ccc;
+            margin-top: 10px;
         }
 
-        button {
-            margin-top: 25px;
-            padding: 15px 50px;
+        .btn-start {
+            margin-top: 30px;
+            padding: 15px 60px;
             font-size: 2rem;
             font-family: 'Permanent Marker', cursive;
-            background-color: #000;
+            background-color: #FF0000;
             color: #FFF;
-            border: 4px solid #FF00FF;
+            border: 4px solid #FFF;
             cursor: pointer;
-            box-shadow: 6px 6px 0px #00FF00;
-            transition: all 0.1s;
+            box-shadow: 0px 0px 15px #FF0000;
             text-transform: uppercase;
+            animation: pulse 1.5s infinite;
         }
-
-        button:active {
-            transform: translate(3px, 3px);
-            box-shadow: 3px 3px 0px #00FF00;
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         /* HUD */
@@ -90,41 +92,51 @@
             padding: 0 20px;
             box-sizing: border-box;
             pointer-events: none;
-            z-index: 5;
+            z-index: 10;
             font-size: 1.5rem;
             color: #FFF;
-            text-shadow: 3px 3px #000;
+            text-shadow: 2px 2px #000;
         }
 
-        .hud-left { color: #00FF00; }
-        .hud-right { text-align: right; }
+        .bar-container {
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border: 2px solid #FFF;
+            margin-top: 5px;
+        }
+        .bar-fill {
+            height: 100%;
+            background: #00FF00;
+            width: 100%;
+            transition: width 0.2s, background 0.2s;
+        }
 
         /* Controls */
         #controls {
             position: absolute;
             bottom: 20px;
             left: 20px;
-            z-index: 8;
+            z-index: 15;
             display: grid;
             grid-template-columns: 70px 70px 70px;
             grid-template-rows: 70px 70px;
             gap: 10px;
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .d-btn {
             width: 70px; height: 70px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #FF00FF;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 30px;
             color: white;
         }
-        
-        .d-btn:active { background: rgba(255, 0, 255, 0.4); }
+        .d-btn:active { background: rgba(255, 0, 0, 0.4); border-color: red; }
         
         #btn-up { grid-column: 2; grid-row: 1; }
         #btn-left { grid-column: 1; grid-row: 2; }
@@ -154,33 +166,35 @@
 <body>
 
     <div id="portrait-warning">
-        <h1>TURN IT SIDEWAYS</h1>
-        <p>Rotate device to Landscape for the full experience</p>
+        <h1>ROTATE PHONE</h1>
+        <p>Landscape Mode Required</p>
     </div>
 
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
 
         <div id="hud">
-            <div class="hud-left">HEALTH: <span id="healthVal">100</span>%</div>
+            <div class="hud-left">
+                HEALTH
+                <div class="bar-container"><div id="healthBar" class="bar-fill"></div></div>
+            </div>
             <div class="hud-right">
-                LETTERS: <span id="scoreVal">0</span><br>
-                TIME: <span id="timeVal">0</span>s
+                SCORE: <span id="scoreVal" style="color:#FFD700">0</span><br>
+                SPEED: <span id="speedVal">0</span> km/h
             </div>
         </div>
 
         <div id="screen-start" class="overlay">
-            <h1>DAYINBALL RACE</h1>
-            <p style="color: #FF00FF;">ALMATY NIGHT RIDE</p>
-            <p style="font-size: 1rem; color: #ddd;">Collect Letters. Survive the Traffic.</p>
-            <button onclick="initGame()">START ENGINE</button>
+            <h1>DAYINBALL</h1>
+            <p>ALMATY STREETS. INFINITE LOOP.</p>
+            <button class="btn-start" onclick="initGame()">DRIVE</button>
         </div>
 
         <div id="screen-gameover" class="overlay">
-            <h1>WRECKED</h1>
-            <p>Time: <span id="end-time">0</span>s | Letters: <span id="end-score">0</span></p>
-            <p style="font-size: 1.2rem; color: #00FF00;">Collected: <span id="end-collection"></span></p>
-            <button onclick="resetGame()">RIDE AGAIN</button>
+            <h1 style="color: #FF0000; text-shadow: none;">TOTALED</h1>
+            <p>Survived: <span id="end-time">0</span>s</p>
+            <p>Collected: <span id="end-collection" style="color:#FFD700; font-family:Arial;"></span></p>
+            <button class="btn-start" onclick="resetGame()">RETRY</button>
         </div>
 
         <div id="controls">
@@ -192,227 +206,205 @@
     </div>
 
     <script>
-        /** * AUDIO SYSTEM (Web Audio API)
-         * No external files needed. Generates Boom Bap beat and SFX.
-         */
+        // --- Audio Engine (Web Audio API) ---
         const AudioEngine = {
             ctx: null,
             beatTimer: null,
             isPlaying: false,
-
             init: function() {
-                if(!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                }
+                if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
             },
-
-            playTone: function(freq, type, duration, vol=0.1) {
+            playTone: function(freq, type, dur, vol=0.1) {
                 if(!this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + duration);
+                const o = this.ctx.createOscillator();
+                const g = this.ctx.createGain();
+                o.type = type;
+                o.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                g.gain.setValueAtTime(vol, this.ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
+                o.connect(g); g.connect(this.ctx.destination);
+                o.start(); o.stop(this.ctx.currentTime + dur);
             },
-
-            playNoise: function(duration, vol=0.2) {
+            playNoise: function(dur, vol=0.2) {
                 if(!this.ctx) return;
-                const bufferSize = this.ctx.sampleRate * duration;
-                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.random() * 2 - 1;
-                }
-                const noise = this.ctx.createBufferSource();
-                noise.buffer = buffer;
-                const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
-                noise.connect(gain);
-                gain.connect(this.ctx.destination);
-                noise.start();
+                const bSize = this.ctx.sampleRate * dur;
+                const b = this.ctx.createBuffer(1, bSize, this.ctx.sampleRate);
+                const d = b.getChannelData(0);
+                for (let i = 0; i < bSize; i++) d[i] = Math.random() * 2 - 1;
+                const n = this.ctx.createBufferSource();
+                n.buffer = b;
+                const g = this.ctx.createGain();
+                g.gain.setValueAtTime(vol, this.ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
+                n.connect(g); g.connect(this.ctx.destination);
+                n.start();
             },
-
-            // Sounds
             sfxCrash: function() {
-                // Low rumble + noise
-                this.playTone(100, 'sawtooth', 0.5, 0.2);
-                this.playNoise(0.3, 0.3);
+                this.playNoise(0.4, 0.4);
+                this.playTone(80, 'sawtooth', 0.5, 0.3);
             },
             sfxCollect: function() {
-                // High ping
-                this.playTone(1200, 'sine', 0.1, 0.1);
-                setTimeout(() => this.playTone(1800, 'sine', 0.1, 0.1), 50);
+                this.playTone(800, 'square', 0.1, 0.1);
+                setTimeout(()=>this.playTone(1200, 'square', 0.1, 0.1), 80);
             },
-
-            // Beat Generation
-            kick: function() {
-                if(!this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.5);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.5);
-            },
-            snare: function() {
-                if(!this.ctx) return;
-                this.playNoise(0.2, 0.15); // Simple noise burst
-                this.playTone(200, 'triangle', 0.1, 0.1); // Underlying tone
-            },
-            hihat: function() {
-                this.playNoise(0.05, 0.05);
-            },
-
+            // 90s Beat
             startBeat: function() {
                 if(this.isPlaying) return;
                 this.isPlaying = true;
-                let step = 0;
-                // 95 BPM roughly
-                const tempo = 630; 
+                let s = 0;
                 this.beatTimer = setInterval(() => {
-                    // Simple Boom Bap Pattern
-                    // 1  &  2  &  3  &  4  &
-                    // K     S     K  K  S
-                    if(step === 0) { this.kick(); this.hihat(); }
-                    if(step === 2) { this.snare(); this.hihat(); }
-                    if(step === 4) { this.kick(); this.hihat(); }
-                    if(step === 5) { this.kick(); } // Ghost kick
-                    if(step === 6) { this.snare(); this.hihat(); }
-                    if(step === 7) { this.hihat(); }
-                    
-                    step = (step + 1) % 8;
-                }, tempo / 4);
+                    const t = this.ctx.currentTime;
+                    // Kick
+                    if(s===0 || s===4 || s===5) {
+                        const o=this.ctx.createOscillator(); const g=this.ctx.createGain();
+                        o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(0.01,t+0.5);
+                        g.gain.setValueAtTime(0.5,t); g.gain.exponentialRampToValueAtTime(0.01,t+0.5);
+                        o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(t+0.5);
+                    }
+                    // Snare
+                    if(s===2 || s===6) { this.playNoise(0.2, 0.2); this.playTone(200,'triangle',0.1,0.1); }
+                    // HiHat
+                    if(s%1===0) { this.playNoise(0.05, 0.05); }
+                    s = (s+1)%8;
+                }, 160); // Faster BPM
             },
-            stopBeat: function() {
-                clearInterval(this.beatTimer);
-                this.isPlaying = false;
-            }
+            stopBeat: function() { clearInterval(this.beatTimer); this.isPlaying = false; }
         };
 
-        // --- Game Setup ---
+        // --- Game Globals ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
         let gameState = 'START';
         let frames = 0;
-        let gameSpeed = 6; // Started slightly faster
+        let gameSpeed = 8; 
         let score = 0;
         let startTime = 0;
-        let collectedLettersString = "";
-        
-        // Kaz Alphabet
+        let collectedStr = "";
         const kazakhChars = ['А', 'Ә', 'Б', 'В', 'Ғ', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ш', 'Ы', 'І'];
 
         // Entities
         const car = {
-            x: 50, y: 0, w: 110, h: 45, // Wider for Lincoln
-            speed: 6,
-            health: 100,
-            colorBody: '#000000',
-            dy: 0, dx: 0
+            x: 50, y: 0, 
+            w: 160, // Much Longer
+            h: 45, 
+            speed: 7, 
+            health: 100 
         };
 
-        let obstacles = [];
+        let obstacles = []; // {x, y, w, h, type, color}
         let letters = [];
         let particles = [];
         let roadOffset = 0;
+        let buildingOffset = 0;
         let mountainOffset = 0;
         let roadY;
 
+        // --- Layout ---
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            roadY = canvas.height * 0.45;
-            car.y = roadY + (canvas.height - roadY)/2 - car.h/2;
+            roadY = canvas.height * 0.55; // Lower road for more skyline
+            car.y = roadY + 20;
         }
         window.addEventListener('resize', resize);
         resize();
 
-        // --- Controls ---
-        const keys = { w: false, a: false, s: false, d: false };
-        const touchBtns = ['btn-up', 'btn-down', 'btn-left', 'btn-right'];
-        const keyMap = {'btn-up': 'w', 'btn-down': 's', 'btn-left': 'a', 'btn-right': 'd'};
-
-        window.addEventListener('keydown', e => {
-            if(e.key==='ArrowUp'||e.key==='w') keys.w=true;
-            if(e.key==='ArrowDown'||e.key==='s') keys.s=true;
-            if(e.key==='ArrowLeft'||e.key==='a') keys.a=true;
-            if(e.key==='ArrowRight'||e.key==='d') keys.d=true;
+        // --- Input ---
+        const keys = { w:false, a:false, s:false, d:false };
+        const map = {'btn-up':'w', 'btn-down':'s', 'btn-left':'a', 'btn-right':'d'};
+        
+        window.addEventListener('keydown', e=>{
+            if(e.key==='w'||e.key==='ArrowUp') keys.w=true;
+            if(e.key==='s'||e.key==='ArrowDown') keys.s=true;
+            if(e.key==='a'||e.key==='ArrowLeft') keys.a=true;
+            if(e.key==='d'||e.key==='ArrowRight') keys.d=true;
         });
-        window.addEventListener('keyup', e => {
-            if(e.key==='ArrowUp'||e.key==='w') keys.w=false;
-            if(e.key==='ArrowDown'||e.key==='s') keys.s=false;
-            if(e.key==='ArrowLeft'||e.key==='a') keys.a=false;
-            if(e.key==='ArrowRight'||e.key==='d') keys.d=false;
+        window.addEventListener('keyup', e=>{
+            if(e.key==='w'||e.key==='ArrowUp') keys.w=false;
+            if(e.key==='s'||e.key==='ArrowDown') keys.s=false;
+            if(e.key==='a'||e.key==='ArrowLeft') keys.a=false;
+            if(e.key==='d'||e.key==='ArrowRight') keys.d=false;
         });
-
-        touchBtns.forEach(id => {
-            const el = document.getElementById(id);
-            el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyMap[id]] = true; });
-            el.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyMap[id]] = false; });
-            el.addEventListener('mousedown', () => keys[keyMap[id]] = true); // Testing
-            el.addEventListener('mouseup', () => keys[keyMap[id]] = false);
+        Object.keys(map).forEach(id=>{
+            const el=document.getElementById(id);
+            el.addEventListener('touchstart', e=>{ e.preventDefault(); keys[map[id]]=true; });
+            el.addEventListener('touchend', e=>{ e.preventDefault(); keys[map[id]]=false; });
+            el.addEventListener('mousedown', ()=>keys[map[id]]=true);
+            el.addEventListener('mouseup', ()=>keys[map[id]]=false);
         });
 
-        // --- Visuals ---
+        // --- Drawing ---
 
-        function drawSkyline() {
-            // Sky Gradient
-            ctx.fillStyle = '#1a1a2e'; // Night sky
-            ctx.fillRect(0, 0, canvas.width, roadY);
-            
-            // Moon
-            ctx.fillStyle = '#FFFACD';
-            ctx.beginPath();
-            ctx.arc(canvas.width - 100, 80, 40, 0, Math.PI*2);
-            ctx.fill();
+        function drawBackground() {
+            // Sky
+            let grad = ctx.createLinearGradient(0,0,0,roadY);
+            grad.addColorStop(0, '#050510');
+            grad.addColorStop(1, '#202040');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,canvas.width,roadY);
 
-            // Mountains (Alatau)
-            ctx.fillStyle = '#0f0f1a';
+            // Mountains (Slowest Parallax)
+            ctx.fillStyle = '#111';
             ctx.beginPath();
             ctx.moveTo(0, roadY);
-            for(let i=0; i<=canvas.width+200; i+=30) {
+            for(let i=0; i<=canvas.width+200; i+=40) {
                 let x = (i - mountainOffset) % (canvas.width+200);
-                if(x<0) x+=(canvas.width+200);
-                let h = (Math.sin(i*0.02) * 80) + 100; // Smoother mountains
+                if(x<0) x+=canvas.width+200;
+                let h = (Math.sin(i*0.01) * 120) + 80;
                 ctx.lineTo(x, roadY - h);
             }
             ctx.lineTo(canvas.width, roadY);
             ctx.fill();
 
-            // Kok Tobe stylized
-            let tx = (canvas.width * 0.7 - mountainOffset*0.5) % (canvas.width+400);
+            // Buildings (Medium Parallax)
+            ctx.fillStyle = '#1a1a1a'; // Dark Grey silhouettes
+            let bWidth = 60;
+            for(let i=0; i<canvas.width/bWidth + 5; i++) {
+                let h = 40 + Math.abs(Math.sin(i*132)) * 100; // Random heights
+                let x = (i * bWidth - buildingOffset) % (canvas.width + bWidth);
+                if(x < -bWidth) x += canvas.width + bWidth;
+                
+                // Draw Building
+                ctx.fillRect(x, roadY - h, bWidth+2, h);
+                
+                // Windows
+                ctx.fillStyle = (Math.random()>0.95) ? '#FFFF00' : '#333'; // Flickering lights
+                if(frames % 10 === 0) ctx.fillRect(x + 10, roadY - h + 10, 5, 5); 
+                ctx.fillStyle = '#1a1a1a'; // reset
+            }
+
+            // TV Tower (Specific object in building layer)
+            let tx = (canvas.width * 0.8 - buildingOffset*0.8) % (canvas.width+400);
             if(tx<0) tx+=(canvas.width+400);
-            ctx.strokeStyle = '#550055';
-            ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(tx, roadY); ctx.lineTo(tx, roadY-200); ctx.stroke();
-            ctx.fillStyle = '#FF00FF';
-            ctx.beginPath(); ctx.arc(tx, roadY-200, 6, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#444'; ctx.lineWidth=3;
+            ctx.beginPath(); ctx.moveTo(tx, roadY); ctx.lineTo(tx, roadY-250); ctx.stroke();
+            ctx.fillStyle='red'; ctx.beginPath(); ctx.arc(tx, roadY-250, 3, 0, 6.28); ctx.fill();
         }
 
         function drawRoad() {
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, roadY, canvas.width, canvas.height - roadY);
+            // Asphalt
+            ctx.fillStyle = '#151515';
+            ctx.fillRect(0, roadY, canvas.width, canvas.height-roadY);
             
-            // Moving markers
-            ctx.fillStyle = '#555';
-            let laneH = (canvas.height - roadY) / 4;
-            for(let i=1; i<4; i++) {
-                let y = roadY + (laneH * i);
-                for(let j=0; j<canvas.width; j+=100) {
-                    let x = (j - roadOffset) % canvas.width;
-                    if(x<0) x += canvas.width;
-                    ctx.fillRect(x, y, 60, 4);
+            // Speed Lines
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            for(let i=0; i<canvas.width; i+=100) {
+                let x = (i - roadOffset*1.5) % canvas.width; 
+                if(x<0) x+=canvas.width;
+                ctx.fillRect(x, roadY, 50, canvas.height-roadY);
+            }
+
+            // Lane markers
+            ctx.fillStyle = '#FFF';
+            let lanes = 4;
+            let lh = (canvas.height-roadY)/lanes;
+            for(let l=1; l<lanes; l++) {
+                let y = roadY + l*lh;
+                for(let i=0; i<canvas.width; i+=120) {
+                    let x = (i - roadOffset) % canvas.width;
+                    if(x<0) x+=canvas.width;
+                    ctx.fillRect(x, y-2, 60, 4);
                 }
             }
         }
@@ -421,151 +413,175 @@
             const {x, y, w, h} = car;
 
             // Shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.fillRect(x + 10, y + h - 5, w - 20, 10);
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(x+10, y+h-5, w-20, 15);
 
-            // Main Body (Black Boxy)
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(x, y + h*0.3, w, h*0.7); // Lower body
-            ctx.fillRect(x + w*0.2, y, w*0.55, h*0.3); // Roof cabin (Boxy)
+            // Body Main (Black)
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(x, y + h*0.35, w, h*0.65); 
+            // Roof
+            ctx.fillRect(x + w*0.25, y, w*0.5, h*0.35);
 
-            // Windows (Tinted)
-            ctx.fillStyle = '#222';
-            ctx.fillRect(x + w*0.22, y+2, w*0.25, h*0.25); // Side
-            ctx.fillRect(x + w*0.50, y+2, w*0.20, h*0.25); // Rear
+            // Windows
+            ctx.fillStyle = '#111';
+            ctx.fillRect(x + w*0.27, y+2, w*0.22, h*0.3);
+            ctx.fillRect(x + w*0.51, y+2, w*0.22, h*0.3);
 
-            // Graffiti Text "Dayinball"
+            // Chrome Trim
+            ctx.fillStyle = '#888';
+            ctx.fillRect(x, y+h*0.5, w, 2);
+
+            // TEXT: DAYINBALL (RED)
             ctx.save();
-            ctx.translate(x + w/2, y + h*0.75);
-            ctx.rotate(-0.05); // Slight tilt
-            ctx.font = '14px "Permanent Marker"';
-            ctx.fillStyle = '#00FF00'; // Neon Green
+            ctx.fillStyle = '#FF0000'; // RED
+            ctx.font = 'bold 20px "Permanent Marker"';
             ctx.textAlign = 'center';
+            ctx.translate(x + w*0.55, y + h*0.85);
             ctx.fillText("DAYINBALL", 0, 0);
             ctx.restore();
 
-            // Wheels (White Walls)
-            const wheelY = y + h - 2;
+            // Wheels
             const drawWheel = (wx) => {
-                ctx.fillStyle = '#000'; // Tire
-                ctx.beginPath(); ctx.arc(wx, wheelY, 11, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#DDD'; // White wall
-                ctx.beginPath(); ctx.arc(wx, wheelY, 7, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#222'; // Rim
-                ctx.beginPath(); ctx.arc(wx, wheelY, 4, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(wx, y+h-2, 12, 0, 6.28); ctx.fill();
+                ctx.fillStyle = '#FFF'; ctx.beginPath(); ctx.arc(wx, y+h-2, 8, 0, 6.28); ctx.fill(); // Whitewall
+                ctx.fillStyle = '#333'; ctx.beginPath(); ctx.arc(wx, y+h-2, 5, 0, 6.28); ctx.fill();
             };
-            drawWheel(x + 25);
-            drawWheel(x + w - 25);
+            drawWheel(x + 30);
+            drawWheel(x + w - 30);
 
-            // Headlight glow
-            ctx.fillStyle = 'rgba(255, 255, 200, 0.4)';
+            // Tail light
+            ctx.fillStyle = '#AA0000';
+            ctx.fillRect(x, y+h*0.4, 5, 10);
+            // Headlight beam
+            ctx.fillStyle = 'rgba(255,255,200,0.3)';
             ctx.beginPath();
-            ctx.moveTo(x + w, y + h*0.4);
-            ctx.lineTo(x + w + 100, y + h*0.2);
-            ctx.lineTo(x + w + 100, y + h*0.8);
+            ctx.moveTo(x+w, y+h*0.5);
+            ctx.lineTo(x+w+150, y+h*0.2);
+            ctx.lineTo(x+w+150, y+h*0.9);
             ctx.fill();
         }
 
-        function drawParticles() {
-            particles.forEach((p, index) => {
-                ctx.fillStyle = p.c;
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life -= 0.05;
-                if(p.life <= 0) particles.splice(index, 1);
+        function drawObstacles() {
+            obstacles.forEach(o => {
+                ctx.fillStyle = o.color;
+                // Shape variation
+                if(o.type === 1) { // Barrier
+                    ctx.fillRect(o.x, o.y, o.w, o.h);
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)'; // stripes
+                    ctx.fillRect(o.x+5, o.y, 5, o.h);
+                    ctx.fillRect(o.x+15, o.y, 5, o.h);
+                } else if(o.type === 2) { // Concrete Block
+                    ctx.fillRect(o.x, o.y, o.w, o.h);
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(o.x, o.y, o.w, o.h);
+                } else { // Pylon
+                    ctx.beginPath();
+                    ctx.moveTo(o.x + o.w/2, o.y);
+                    ctx.lineTo(o.x + o.w, o.y + o.h);
+                    ctx.lineTo(o.x, o.y + o.h);
+                    ctx.fill();
+                }
             });
         }
 
-        function spawnParticles(x, y, color) {
-            for(let i=0; i<15; i++) {
-                particles.push({
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * 15,
-                    vy: (Math.random() - 0.5) * 15,
-                    life: 1.0,
-                    c: color,
-                    size: Math.random() * 5 + 2
-                });
-            }
+        function drawParticles() {
+            particles.forEach((p,i) => {
+                ctx.fillStyle = p.c;
+                ctx.fillRect(p.x, p.y, p.s, p.s);
+                p.x += p.vx; p.y += p.vy;
+                p.l -= 0.05;
+                if(p.l<=0) particles.splice(i,1);
+            });
         }
 
-        // --- Core Logic ---
+        // --- Logic ---
 
         function update() {
-            // Movement
-            if (keys.w && car.y > roadY) car.y -= car.speed;
-            if (keys.s && car.y < canvas.height - car.h) car.y += car.speed;
-            if (keys.a && car.x > 0) car.x -= car.speed;
-            if (keys.d && car.x < canvas.width - car.w) car.x += car.speed;
+            // Car Move
+            if(keys.w && car.y > roadY) car.y -= car.speed;
+            if(keys.s && car.y < canvas.height - car.h) car.y += car.speed;
+            if(keys.a && car.x > 0) car.x -= car.speed;
+            if(keys.d && car.x < canvas.width - car.w) car.x += car.speed;
 
-            // World Move
+            // Environment Move
             roadOffset += gameSpeed;
-            mountainOffset += gameSpeed * 0.2;
-            
-            // Difficulty Ramping
-            // Cap speed at 15 so it's playable, but starts at 6
-            if(gameSpeed < 15) gameSpeed += 0.002; 
+            buildingOffset += gameSpeed * 0.5;
+            mountainOffset += gameSpeed * 0.1;
 
-            // Spawning Logic (More frequent as speed increases)
-            // Base frame gap is 80, minus speed factor
-            let spawnRate = Math.max(30, 90 - Math.floor(gameSpeed * 3));
+            // Difficulty Ramp (Faster increase)
+            if(gameSpeed < 25) gameSpeed += 0.005; 
+
+            // Spawn Logic
+            // Adjusted for speed: faster speed = lower mod value = more spawns
+            let spawnFreq = Math.max(25, 80 - Math.floor(gameSpeed * 2));
             
-            if (frames % spawnRate === 0) {
-                // Obstacle
-                let h = 40;
+            if(frames % spawnFreq === 0) {
+                let type = Math.floor(Math.random() * 3) + 1;
+                let w=40, h=40, c='#FF4500';
+                
+                // Varied Obstacles
+                if(type === 1) { w=30; h=50; c='#FF0000'; } // Tall Barrier
+                if(type === 2) { w=50; h=30; c='#808080'; } // Concrete Block
+                if(type === 3) { w=30; h=40; c='#FFFF00'; } // Pylon
+
                 let y = Math.random() * (canvas.height - roadY - h) + roadY;
-                obstacles.push({ x: canvas.width, y: y, w: 40, h: 40, active: true });
+                obstacles.push({ x: canvas.width, y:y, w:w, h:h, type:type, color:c, active:true });
             }
 
-            if (frames % (spawnRate * 1.5) === 0) {
-                // Letter
-                let char = kazakhChars[Math.floor(Math.random() * kazakhChars.length)];
-                let y = Math.random() * (canvas.height - roadY - 40) + roadY;
-                letters.push({ x: canvas.width, y: y, w: 40, h: 40, char: char, active: true });
+            if(frames % (spawnFreq * 2) === 0) {
+                let char = kazakhChars[Math.floor(Math.random()*kazakhChars.length)];
+                let y = Math.random()*(canvas.height - roadY - 40) + roadY;
+                letters.push({ x:canvas.width, y:y, w:40, h:40, char:char, active:true });
             }
 
-            // Update Entities
+            // Move & Clean
             obstacles.forEach(o => o.x -= gameSpeed);
+            obstacles = obstacles.filter(o => o.x > -100 && o.active);
             letters.forEach(l => l.x -= gameSpeed);
+            letters = letters.filter(l => l.x > -100 && l.active);
 
-            // Cleanup
-            obstacles = obstacles.filter(o => o.x + o.w > -100 && o.active);
-            letters = letters.filter(l => l.x + l.w > -100 && l.active);
-
+            // Collisions
             checkCollisions();
 
-            // Stats
-            document.getElementById('healthVal').innerText = Math.floor(car.health);
+            // HUD
             document.getElementById('scoreVal').innerText = score;
-            document.getElementById('timeVal').innerText = ((Date.now() - startTime)/1000).toFixed(1);
+            document.getElementById('speedVal').innerText = Math.floor(gameSpeed * 10);
+            
+            // Health Bar Color
+            let bar = document.getElementById('healthBar');
+            bar.style.width = car.health + '%';
+            if(car.health < 30) bar.style.background = 'red';
+            else if(car.health < 60) bar.style.background = 'yellow';
+            else bar.style.background = '#00FF00';
 
+            if(car.health <= 0) gameOver();
             frames++;
-            if (car.health <= 0) gameOver();
         }
 
         function checkCollisions() {
-            // Obstacles
-            obstacles.forEach(obs => {
-                if (car.x < obs.x + obs.w && car.x + car.w > obs.x &&
-                    car.y < obs.y + obs.h && car.y + car.h > obs.y) {
-                    if(obs.active) {
-                        car.health -= 20;
-                        obs.active = false;
+            obstacles.forEach(o => {
+                if(car.x < o.x + o.w && car.x + car.w > o.x &&
+                   car.y < o.y + o.h && car.y + car.h > o.y) {
+                    if(o.active) {
+                        car.health -= 25; // High damage
+                        o.active = false;
                         AudioEngine.sfxCrash();
-                        // Pixel Shards (Orange/Red)
-                        spawnParticles(obs.x + obs.w/2, obs.y + obs.h/2, '#FF4500'); 
+                        // Explosion particles
+                        for(let i=0; i<10; i++) particles.push({
+                            x: o.x+o.w/2, y: o.y+o.h/2, 
+                            vx:(Math.random()-0.5)*10, vy:(Math.random()-0.5)*10, 
+                            l:1, s:Math.random()*6+2, c:o.color
+                        });
                     }
                 }
             });
-
-            // Letters
             letters.forEach(l => {
-                if (car.x < l.x + l.w && car.x + car.w > l.x &&
-                    car.y < l.y + l.h && car.y + car.h > l.y) {
+                if(car.x < l.x + l.w && car.x + car.w > l.x &&
+                   car.y < l.y + l.h && car.y + car.h > l.y) {
                     if(l.active) {
                         score++;
-                        collectedLettersString += l.char + " ";
+                        collectedStr += l.char + " ";
                         l.active = false;
                         AudioEngine.sfxCollect();
                     }
@@ -573,84 +589,51 @@
             });
         }
 
-        function drawGame() {
+        function loop() {
             if(gameState !== 'PLAYING') return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            drawSkyline();
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            drawBackground();
             drawRoad();
-
-            // Obstacles
-            ctx.fillStyle = '#FF4500';
-            ctx.strokeStyle = '#000';
-            obstacles.forEach(o => {
-                ctx.fillRect(o.x, o.y, o.w, o.h);
-                ctx.strokeRect(o.x, o.y, o.w, o.h);
-                // "Concrete" detail
-                ctx.fillStyle='rgba(0,0,0,0.2)';
-                ctx.fillRect(o.x+5, o.y+5, o.w-10, o.h-10);
-                ctx.fillStyle='#FF4500';
-            });
-
-            // Letters
-            ctx.font = 'bold 28px Arial';
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            drawObstacles();
+            
+            // Draw Letters
+            ctx.font = 'bold 28px Arial'; ctx.textAlign = 'center'; ctx.textBaseline='middle';
             letters.forEach(l => {
-                ctx.fillStyle = '#FFD700';
-                ctx.beginPath(); ctx.arc(l.x+20, l.y+20, 20, 0, Math.PI*2); ctx.fill();
-                ctx.stroke();
-                ctx.fillStyle = '#000';
-                ctx.fillText(l.char, l.x+20, l.y+22);
+                ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(l.x+20,l.y+20,20,0,6.28); ctx.fill();
+                ctx.fillStyle = '#000'; ctx.fillText(l.char, l.x+20, l.y+22);
             });
 
             drawLincoln();
             drawParticles();
-
             update();
-            requestAnimationFrame(drawGame);
+            requestAnimationFrame(loop);
         }
 
-        // --- Game Flow ---
-
-        function initGame() {
-            AudioEngine.init(); // Must happen on user interaction
-            startGame();
-        }
-
+        // --- Flow ---
+        function initGame() { AudioEngine.init(); startGame(); }
+        
         function startGame() {
-            document.getElementById('screen-start').style.display = 'none';
-            document.getElementById('screen-gameover').style.display = 'none';
-            document.getElementById('controls').style.display = 'grid';
-            
+            document.getElementById('screen-start').style.display='none';
+            document.getElementById('screen-gameover').style.display='none';
+            document.getElementById('controls').style.display='grid';
             gameState = 'PLAYING';
-            score = 0;
-            car.health = 100;
-            car.x = 50;
-            gameSpeed = 6;
-            obstacles = [];
-            letters = [];
-            particles = [];
-            collectedLettersString = "";
-            startTime = Date.now();
-            frames = 0;
-            
+            score=0; car.health=100; car.x=50; gameSpeed=8; 
+            obstacles=[]; letters=[]; particles=[]; collectedStr="";
+            startTime = Date.now(); frames=0;
             AudioEngine.startBeat();
-            drawGame();
+            loop();
         }
 
         function gameOver() {
-            gameState = 'GAMEOVER';
+            gameState='GAMEOVER';
             AudioEngine.stopBeat();
-            document.getElementById('screen-gameover').style.display = 'flex';
-            document.getElementById('controls').style.display = 'none';
-            document.getElementById('end-time').innerText = ((Date.now() - startTime)/1000).toFixed(1);
-            document.getElementById('end-score').innerText = score;
-            document.getElementById('end-collection').innerText = collectedLettersString;
+            document.getElementById('screen-gameover').style.display='flex';
+            document.getElementById('controls').style.display='none';
+            document.getElementById('end-time').innerText = ((Date.now()-startTime)/1000).toFixed(1);
+            document.getElementById('end-collection').innerText = collectedStr;
         }
 
-        function resetGame() {
-            startGame();
-        }
+        function resetGame() { startGame(); }
     </script>
 </body>
 </html>
