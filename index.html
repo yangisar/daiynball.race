@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DAYINBALL RACE</title>
+    <title>DAYINBALL RACE: LINCOLN EDITION</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rubik+Glitch&display=swap');
 
         body {
             margin: 0;
@@ -13,14 +13,15 @@
             overflow: hidden;
             background-color: #202020;
             font-family: 'Permanent Marker', cursive, sans-serif;
-            touch-action: none; /* Prevent scrolling on mobile */
+            touch-action: none;
+            user-select: none;
         }
 
         #gameContainer {
             position: relative;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 40%, #505050 40%, #202020 100%);
+            background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 40%, #505050 40%, #202020 100%);
         }
 
         canvas {
@@ -32,49 +33,51 @@
         /* UI Overlays */
         .overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.85);
-            color: #FFD700; /* Gold */
+            background: rgba(0, 0, 0, 0.9);
+            color: #FFD700;
             z-index: 10;
             text-align: center;
         }
 
         h1 {
-            font-size: 4rem;
+            font-family: 'Rubik Glitch', cursive;
+            font-size: 5rem;
             margin: 0;
-            text-shadow: 4px 4px #FF00FF; /* Hot Pink shadow */
-            transform: rotate(-3deg);
-            letter-spacing: 2px;
+            color: #FFF;
+            text-shadow: 5px 5px #000, -2px -2px #FF00FF;
+            transform: rotate(-2deg);
+            letter-spacing: 4px;
         }
 
         p {
             font-size: 1.5rem;
-            color: white;
+            color: #00FF00;
+            text-shadow: 1px 1px #000;
         }
 
         button {
-            margin-top: 20px;
-            padding: 15px 40px;
+            margin-top: 25px;
+            padding: 15px 50px;
             font-size: 2rem;
             font-family: 'Permanent Marker', cursive;
-            background-color: #FF00FF;
-            color: white;
-            border: 4px solid #FFD700;
+            background-color: #000;
+            color: #FFF;
+            border: 4px solid #FF00FF;
             cursor: pointer;
-            box-shadow: 5px 5px 0px #000;
-            transition: transform 0.1s;
+            box-shadow: 6px 6px 0px #00FF00;
+            transition: all 0.1s;
+            text-transform: uppercase;
         }
 
         button:active {
-            transform: translate(2px, 2px);
-            box-shadow: 3px 3px 0px #000;
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0px #00FF00;
         }
 
         /* HUD */
@@ -90,42 +93,39 @@
             z-index: 5;
             font-size: 1.5rem;
             color: #FFF;
-            text-shadow: 2px 2px #000;
+            text-shadow: 3px 3px #000;
         }
 
-        .hud-left { color: #00FF00; } /* Green for Health */
+        .hud-left { color: #00FF00; }
         .hud-right { text-align: right; }
 
-        /* Mobile Controls */
+        /* Controls */
         #controls {
             position: absolute;
             bottom: 20px;
             left: 20px;
             z-index: 8;
             display: grid;
-            grid-template-columns: 60px 60px 60px;
-            grid-template-rows: 60px 60px;
+            grid-template-columns: 70px 70px 70px;
+            grid-template-rows: 70px 70px;
             gap: 10px;
-            opacity: 0.6;
+            opacity: 0.7;
         }
 
         .d-btn {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid white;
-            border-radius: 50%;
+            width: 70px; height: 70px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #FF00FF;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
+            font-size: 30px;
             color: white;
-            user-select: none;
         }
         
-        .d-btn:active { background: rgba(255, 255, 255, 0.6); }
+        .d-btn:active { background: rgba(255, 0, 255, 0.4); }
         
-        /* Grid placement for D-pad */
         #btn-up { grid-column: 2; grid-row: 1; }
         #btn-left { grid-column: 1; grid-row: 2; }
         #btn-down { grid-column: 2; grid-row: 2; }
@@ -134,7 +134,6 @@
         #screen-start { display: flex; }
         #screen-gameover { display: none; }
 
-        /* Landscape warning for mobile */
         @media screen and (orientation: portrait) {
             #portrait-warning { display: flex !important; }
         }
@@ -150,13 +149,13 @@
             text-align: center;
             padding: 20px;
         }
-
     </style>
 </head>
 <body>
 
     <div id="portrait-warning">
-        Please rotate your device to Landscape mode to play!
+        <h1>TURN IT SIDEWAYS</h1>
+        <p>Rotate device to Landscape for the full experience</p>
     </div>
 
     <div id="gameContainer">
@@ -172,16 +171,15 @@
 
         <div id="screen-start" class="overlay">
             <h1>DAYINBALL RACE</h1>
-            <p style="color: #FF00FF; margin-bottom: 5px;">ALMATY STREETS</p>
-            <p>Gather Kazakh Letters. Avoid Obstacles.</p>
-            <button onclick="startGame()">START ENGINE</button>
+            <p style="color: #FF00FF;">ALMATY NIGHT RIDE</p>
+            <p style="font-size: 1rem; color: #ddd;">Collect Letters. Survive the Traffic.</p>
+            <button onclick="initGame()">START ENGINE</button>
         </div>
 
         <div id="screen-gameover" class="overlay">
-            <h1>GAME OVER</h1>
-            <p>Time Survived: <span id="end-time">0</span>s</p>
-            <p>Letters Gathered: <span id="end-score">0</span></p>
-            <p style="font-size: 1rem; color: #aaa;">Collected: <span id="end-collection"></span></p>
+            <h1>WRECKED</h1>
+            <p>Time: <span id="end-time">0</span>s | Letters: <span id="end-score">0</span></p>
+            <p style="font-size: 1.2rem; color: #00FF00;">Collected: <span id="end-collection"></span></p>
             <button onclick="resetGame()">RIDE AGAIN</button>
         </div>
 
@@ -194,303 +192,430 @@
     </div>
 
     <script>
-        // --- Setup ---
+        /** * AUDIO SYSTEM (Web Audio API)
+         * No external files needed. Generates Boom Bap beat and SFX.
+         */
+        const AudioEngine = {
+            ctx: null,
+            beatTimer: null,
+            isPlaying: false,
+
+            init: function() {
+                if(!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+
+            playTone: function(freq, type, duration, vol=0.1) {
+                if(!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            },
+
+            playNoise: function(duration, vol=0.2) {
+                if(!this.ctx) return;
+                const bufferSize = this.ctx.sampleRate * duration;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                noise.connect(gain);
+                gain.connect(this.ctx.destination);
+                noise.start();
+            },
+
+            // Sounds
+            sfxCrash: function() {
+                // Low rumble + noise
+                this.playTone(100, 'sawtooth', 0.5, 0.2);
+                this.playNoise(0.3, 0.3);
+            },
+            sfxCollect: function() {
+                // High ping
+                this.playTone(1200, 'sine', 0.1, 0.1);
+                setTimeout(() => this.playTone(1800, 'sine', 0.1, 0.1), 50);
+            },
+
+            // Beat Generation
+            kick: function() {
+                if(!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.5);
+            },
+            snare: function() {
+                if(!this.ctx) return;
+                this.playNoise(0.2, 0.15); // Simple noise burst
+                this.playTone(200, 'triangle', 0.1, 0.1); // Underlying tone
+            },
+            hihat: function() {
+                this.playNoise(0.05, 0.05);
+            },
+
+            startBeat: function() {
+                if(this.isPlaying) return;
+                this.isPlaying = true;
+                let step = 0;
+                // 95 BPM roughly
+                const tempo = 630; 
+                this.beatTimer = setInterval(() => {
+                    // Simple Boom Bap Pattern
+                    // 1  &  2  &  3  &  4  &
+                    // K     S     K  K  S
+                    if(step === 0) { this.kick(); this.hihat(); }
+                    if(step === 2) { this.snare(); this.hihat(); }
+                    if(step === 4) { this.kick(); this.hihat(); }
+                    if(step === 5) { this.kick(); } // Ghost kick
+                    if(step === 6) { this.snare(); this.hihat(); }
+                    if(step === 7) { this.hihat(); }
+                    
+                    step = (step + 1) % 8;
+                }, tempo / 4);
+            },
+            stopBeat: function() {
+                clearInterval(this.beatTimer);
+                this.isPlaying = false;
+            }
+        };
+
+        // --- Game Setup ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        let animationId;
-        let lastTime = 0;
-
-        // Game State
-        let gameState = 'START'; // START, PLAYING, GAMEOVER
+        
+        let gameState = 'START';
         let frames = 0;
-        let gameSpeed = 5;
+        let gameSpeed = 6; // Started slightly faster
         let score = 0;
         let startTime = 0;
-        let timeSurvived = 0;
         let collectedLettersString = "";
         
         // Kaz Alphabet
-        const kazakhChars = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'І', 'Ь', 'Э', 'Ю', 'Я'];
+        const kazakhChars = ['А', 'Ә', 'Б', 'В', 'Ғ', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ш', 'Ы', 'І'];
 
         // Entities
         const car = {
-            x: 50,
-            y: 0,
-            w: 80,
-            h: 40,
-            speed: 5,
-            color: '#FF00FF', // Hot Pink
+            x: 50, y: 0, w: 110, h: 45, // Wider for Lincoln
+            speed: 6,
             health: 100,
-            dy: 0,
-            dx: 0
+            colorBody: '#000000',
+            dy: 0, dx: 0
         };
 
         let obstacles = [];
         let letters = [];
+        let particles = [];
         let roadOffset = 0;
         let mountainOffset = 0;
+        let roadY;
 
-        // Resize Logic
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            // Set road Y based on height (bottom 60% is road)
-            roadY = canvas.height * 0.4;
+            roadY = canvas.height * 0.45;
             car.y = roadY + (canvas.height - roadY)/2 - car.h/2;
         }
-        let roadY;
         window.addEventListener('resize', resize);
         resize();
 
-        // --- Input Handling ---
+        // --- Controls ---
         const keys = { w: false, a: false, s: false, d: false };
+        const touchBtns = ['btn-up', 'btn-down', 'btn-left', 'btn-right'];
+        const keyMap = {'btn-up': 'w', 'btn-down': 's', 'btn-left': 'a', 'btn-right': 'd'};
 
-        window.addEventListener('keydown', (e) => {
-            if(e.key === 'ArrowUp' || e.key === 'w') keys.w = true;
-            if(e.key === 'ArrowDown' || e.key === 's') keys.s = true;
-            if(e.key === 'ArrowLeft' || e.key === 'a') keys.a = true;
-            if(e.key === 'ArrowRight' || e.key === 'd') keys.d = true;
+        window.addEventListener('keydown', e => {
+            if(e.key==='ArrowUp'||e.key==='w') keys.w=true;
+            if(e.key==='ArrowDown'||e.key==='s') keys.s=true;
+            if(e.key==='ArrowLeft'||e.key==='a') keys.a=true;
+            if(e.key==='ArrowRight'||e.key==='d') keys.d=true;
+        });
+        window.addEventListener('keyup', e => {
+            if(e.key==='ArrowUp'||e.key==='w') keys.w=false;
+            if(e.key==='ArrowDown'||e.key==='s') keys.s=false;
+            if(e.key==='ArrowLeft'||e.key==='a') keys.a=false;
+            if(e.key==='ArrowRight'||e.key==='d') keys.d=false;
         });
 
-        window.addEventListener('keyup', (e) => {
-            if(e.key === 'ArrowUp' || e.key === 'w') keys.w = false;
-            if(e.key === 'ArrowDown' || e.key === 's') keys.s = false;
-            if(e.key === 'ArrowLeft' || e.key === 'a') keys.a = false;
-            if(e.key === 'ArrowRight' || e.key === 'd') keys.d = false;
-        });
-
-        // Touch Controls
-        const btns = ['btn-up', 'btn-down', 'btn-left', 'btn-right'];
-        const map = {'btn-up': 'w', 'btn-down': 's', 'btn-left': 'a', 'btn-right': 'd'};
-
-        btns.forEach(id => {
+        touchBtns.forEach(id => {
             const el = document.getElementById(id);
-            el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[map[id]] = true; });
-            el.addEventListener('touchend', (e) => { e.preventDefault(); keys[map[id]] = false; });
-            // Mouse support for testing on desktop with buttons
-            el.addEventListener('mousedown', (e) => { keys[map[id]] = true; });
-            el.addEventListener('mouseup', (e) => { keys[map[id]] = false; });
+            el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyMap[id]] = true; });
+            el.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyMap[id]] = false; });
+            el.addEventListener('mousedown', () => keys[keyMap[id]] = true); // Testing
+            el.addEventListener('mouseup', () => keys[keyMap[id]] = false);
         });
 
-
-        // --- Drawing Functions ---
+        // --- Visuals ---
 
         function drawSkyline() {
-            // Sky
-            // Mountains (Trans-Ili Alatau) - Parallax slow move
-            ctx.fillStyle = '#C0C0C0'; // Grey mountains
+            // Sky Gradient
+            ctx.fillStyle = '#1a1a2e'; // Night sky
+            ctx.fillRect(0, 0, canvas.width, roadY);
+            
+            // Moon
+            ctx.fillStyle = '#FFFACD';
+            ctx.beginPath();
+            ctx.arc(canvas.width - 100, 80, 40, 0, Math.PI*2);
+            ctx.fill();
+
+            // Mountains (Alatau)
+            ctx.fillStyle = '#0f0f1a';
             ctx.beginPath();
             ctx.moveTo(0, roadY);
-            
-            // Procedural jagged peaks
-            for(let i = 0; i <= canvas.width + 200; i+= 50) {
-                let x = (i - mountainOffset) % (canvas.width + 200);
-                // Handle wrapping visually seamless needs more complex logic, simplified here:
-                if (x < 0) x += (canvas.width + 200);
-                
-                let peakH = (i % 100 === 0) ? 150 : 50; 
-                ctx.lineTo(x, roadY - peakH);
+            for(let i=0; i<=canvas.width+200; i+=30) {
+                let x = (i - mountainOffset) % (canvas.width+200);
+                if(x<0) x+=(canvas.width+200);
+                let h = (Math.sin(i*0.02) * 80) + 100; // Smoother mountains
+                ctx.lineTo(x, roadY - h);
             }
             ctx.lineTo(canvas.width, roadY);
             ctx.fill();
 
-            // Kok Tobe Tower (Simplistic)
-            let towerX = (canvas.width * 0.8 - mountainOffset * 0.5) % (canvas.width + 500);
-            if(towerX < 0) towerX += (canvas.width + 500);
-            
-            ctx.strokeStyle = '#555';
-            ctx.lineWidth = 5;
-            ctx.beginPath();
-            ctx.moveTo(towerX, roadY);
-            ctx.lineTo(towerX, roadY - 180);
-            ctx.stroke();
-            // The apple/top
-            ctx.fillStyle = '#AA0000';
-            ctx.beginPath();
-            ctx.arc(towerX, roadY - 180, 10, 0, Math.PI*2);
-            ctx.fill();
+            // Kok Tobe stylized
+            let tx = (canvas.width * 0.7 - mountainOffset*0.5) % (canvas.width+400);
+            if(tx<0) tx+=(canvas.width+400);
+            ctx.strokeStyle = '#550055';
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(tx, roadY); ctx.lineTo(tx, roadY-200); ctx.stroke();
+            ctx.fillStyle = '#FF00FF';
+            ctx.beginPath(); ctx.arc(tx, roadY-200, 6, 0, Math.PI*2); ctx.fill();
         }
 
         function drawRoad() {
-            // Road Surface
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = '#111';
             ctx.fillRect(0, roadY, canvas.width, canvas.height - roadY);
-
-            // Moving Lines
-            ctx.fillStyle = '#FFF';
-            let laneHeight = (canvas.height - roadY) / 4;
             
+            // Moving markers
+            ctx.fillStyle = '#555';
+            let laneH = (canvas.height - roadY) / 4;
             for(let i=1; i<4; i++) {
-                let y = roadY + (laneHeight * i);
-                for(let j=0; j<canvas.width; j+=80) {
+                let y = roadY + (laneH * i);
+                for(let j=0; j<canvas.width; j+=100) {
                     let x = (j - roadOffset) % canvas.width;
-                    if(x < 0) x += canvas.width;
-                    ctx.fillRect(x, y, 40, 5);
+                    if(x<0) x += canvas.width;
+                    ctx.fillRect(x, y, 60, 4);
                 }
             }
         }
 
-        function drawCar() {
-            // Body
-            ctx.fillStyle = car.color;
-            // A simple sedan shape
-            ctx.beginPath();
-            ctx.moveTo(car.x, car.y + car.h);
-            ctx.lineTo(car.x + car.w, car.y + car.h); // Bottom
-            ctx.lineTo(car.x + car.w, car.y + car.h*0.4); // Front nose
-            ctx.lineTo(car.x + car.w*0.7, car.y); // Windshield
-            ctx.lineTo(car.x + car.w*0.2, car.y); // Roof
-            ctx.lineTo(car.x, car.y + car.h*0.4); // Rear
-            ctx.closePath();
-            ctx.fill();
-            
-            // Wheels
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(car.x + 15, car.y + car.h, 10, 0, Math.PI*2);
-            ctx.arc(car.x + car.w - 15, car.y + car.h, 10, 0, Math.PI*2);
-            ctx.fill();
+        function drawLincoln() {
+            const {x, y, w, h} = car;
 
-            // Headlight
-            ctx.fillStyle = '#FFFF00';
-            ctx.fillRect(car.x + car.w - 5, car.y + car.h*0.5, 5, 10);
-        }
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(x + 10, y + h - 5, w - 20, 10);
 
-        function drawObstacles() {
-            ctx.fillStyle = '#FF4500'; // Orange Red
-            obstacles.forEach(obs => {
-                // Draw a "Rock" or Barrier
-                ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
-                // Detail
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
-            });
-        }
+            // Main Body (Black Boxy)
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x, y + h*0.3, w, h*0.7); // Lower body
+            ctx.fillRect(x + w*0.2, y, w*0.55, h*0.3); // Roof cabin (Boxy)
 
-        function drawLetters() {
-            ctx.font = 'bold 30px Arial';
+            // Windows (Tinted)
+            ctx.fillStyle = '#222';
+            ctx.fillRect(x + w*0.22, y+2, w*0.25, h*0.25); // Side
+            ctx.fillRect(x + w*0.50, y+2, w*0.20, h*0.25); // Rear
+
+            // Graffiti Text "Dayinball"
+            ctx.save();
+            ctx.translate(x + w/2, y + h*0.75);
+            ctx.rotate(-0.05); // Slight tilt
+            ctx.font = '14px "Permanent Marker"';
+            ctx.fillStyle = '#00FF00'; // Neon Green
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            letters.forEach(l => {
-                // Bubble
-                ctx.fillStyle = '#FFD700'; // Gold
-                ctx.beginPath();
-                ctx.arc(l.x + l.w/2, l.y + l.h/2, l.w/2, 0, Math.PI*2);
-                ctx.fill();
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000';
-                ctx.stroke();
+            ctx.fillText("DAYINBALL", 0, 0);
+            ctx.restore();
 
-                // Text
-                ctx.fillStyle = '#000';
-                ctx.fillText(l.char, l.x + l.w/2, l.y + l.h/2);
+            // Wheels (White Walls)
+            const wheelY = y + h - 2;
+            const drawWheel = (wx) => {
+                ctx.fillStyle = '#000'; // Tire
+                ctx.beginPath(); ctx.arc(wx, wheelY, 11, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#DDD'; // White wall
+                ctx.beginPath(); ctx.arc(wx, wheelY, 7, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#222'; // Rim
+                ctx.beginPath(); ctx.arc(wx, wheelY, 4, 0, Math.PI*2); ctx.fill();
+            };
+            drawWheel(x + 25);
+            drawWheel(x + w - 25);
+
+            // Headlight glow
+            ctx.fillStyle = 'rgba(255, 255, 200, 0.4)';
+            ctx.beginPath();
+            ctx.moveTo(x + w, y + h*0.4);
+            ctx.lineTo(x + w + 100, y + h*0.2);
+            ctx.lineTo(x + w + 100, y + h*0.8);
+            ctx.fill();
+        }
+
+        function drawParticles() {
+            particles.forEach((p, index) => {
+                ctx.fillStyle = p.c;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.05;
+                if(p.life <= 0) particles.splice(index, 1);
             });
         }
 
-        // --- Logic ---
+        function spawnParticles(x, y, color) {
+            for(let i=0; i<15; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 15,
+                    vy: (Math.random() - 0.5) * 15,
+                    life: 1.0,
+                    c: color,
+                    size: Math.random() * 5 + 2
+                });
+            }
+        }
+
+        // --- Core Logic ---
 
         function update() {
-            // Car Movement
+            // Movement
             if (keys.w && car.y > roadY) car.y -= car.speed;
             if (keys.s && car.y < canvas.height - car.h) car.y += car.speed;
             if (keys.a && car.x > 0) car.x -= car.speed;
             if (keys.d && car.x < canvas.width - car.w) car.x += car.speed;
 
-            // Environment Movement
+            // World Move
             roadOffset += gameSpeed;
-            mountainOffset += gameSpeed * 0.1; // Parallax
-            gameSpeed += 0.001; // Slowly speed up
+            mountainOffset += gameSpeed * 0.2;
+            
+            // Difficulty Ramping
+            // Cap speed at 15 so it's playable, but starts at 6
+            if(gameSpeed < 15) gameSpeed += 0.002; 
 
-            // Spawning
-            if (frames % 100 === 0) {
-                // Spawn Obstacle
+            // Spawning Logic (More frequent as speed increases)
+            // Base frame gap is 80, minus speed factor
+            let spawnRate = Math.max(30, 90 - Math.floor(gameSpeed * 3));
+            
+            if (frames % spawnRate === 0) {
+                // Obstacle
                 let h = 40;
                 let y = Math.random() * (canvas.height - roadY - h) + roadY;
                 obstacles.push({ x: canvas.width, y: y, w: 40, h: 40, active: true });
             }
 
-            if (frames % 150 === 0) {
-                // Spawn Letter
-                let h = 40;
-                let y = Math.random() * (canvas.height - roadY - h) + roadY;
+            if (frames % (spawnRate * 1.5) === 0) {
+                // Letter
                 let char = kazakhChars[Math.floor(Math.random() * kazakhChars.length)];
+                let y = Math.random() * (canvas.height - roadY - 40) + roadY;
                 letters.push({ x: canvas.width, y: y, w: 40, h: 40, char: char, active: true });
             }
 
-            // Update Obstacles
-            obstacles.forEach(obs => obs.x -= gameSpeed);
-            obstacles = obstacles.filter(obs => obs.x + obs.w > 0 && obs.active);
-
-            // Update Letters
+            // Update Entities
+            obstacles.forEach(o => o.x -= gameSpeed);
             letters.forEach(l => l.x -= gameSpeed);
-            letters = letters.filter(l => l.x + l.w > 0 && l.active);
 
-            // Collisions
+            // Cleanup
+            obstacles = obstacles.filter(o => o.x + o.w > -100 && o.active);
+            letters = letters.filter(l => l.x + l.w > -100 && l.active);
+
             checkCollisions();
 
             // Stats
-            let now = Date.now();
-            timeSurvived = ((now - startTime) / 1000).toFixed(1);
-            
-            // HUD Update
             document.getElementById('healthVal').innerText = Math.floor(car.health);
             document.getElementById('scoreVal').innerText = score;
-            document.getElementById('timeVal').innerText = timeSurvived;
+            document.getElementById('timeVal').innerText = ((Date.now() - startTime)/1000).toFixed(1);
 
             frames++;
-            
             if (car.health <= 0) gameOver();
         }
 
         function checkCollisions() {
-            // AABB Collision
+            // Obstacles
             obstacles.forEach(obs => {
-                if (car.x < obs.x + obs.w &&
-                    car.x + car.w > obs.x &&
-                    car.y < obs.y + obs.h &&
-                    car.y + car.h > obs.y) {
-                    
+                if (car.x < obs.x + obs.w && car.x + car.w > obs.x &&
+                    car.y < obs.y + obs.h && car.y + car.h > obs.y) {
                     if(obs.active) {
                         car.health -= 20;
-                        obs.active = false; // Remove after hit so it doesn't drain instant
-                        // Flash effect could go here
+                        obs.active = false;
+                        AudioEngine.sfxCrash();
+                        // Pixel Shards (Orange/Red)
+                        spawnParticles(obs.x + obs.w/2, obs.y + obs.h/2, '#FF4500'); 
                     }
                 }
             });
 
+            // Letters
             letters.forEach(l => {
-                if (car.x < l.x + l.w &&
-                    car.x + car.w > l.x &&
-                    car.y < l.y + l.h &&
-                    car.y + car.h > l.y) {
-                    
+                if (car.x < l.x + l.w && car.x + car.w > l.x &&
+                    car.y < l.y + l.h && car.y + car.h > l.y) {
                     if(l.active) {
                         score++;
                         collectedLettersString += l.char + " ";
                         l.active = false;
+                        AudioEngine.sfxCollect();
                     }
                 }
             });
         }
 
-        function loop() {
-            if (gameState !== 'PLAYING') return;
-
+        function drawGame() {
+            if(gameState !== 'PLAYING') return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             drawSkyline();
             drawRoad();
-            drawObstacles();
-            drawLetters();
-            drawCar();
+
+            // Obstacles
+            ctx.fillStyle = '#FF4500';
+            ctx.strokeStyle = '#000';
+            obstacles.forEach(o => {
+                ctx.fillRect(o.x, o.y, o.w, o.h);
+                ctx.strokeRect(o.x, o.y, o.w, o.h);
+                // "Concrete" detail
+                ctx.fillStyle='rgba(0,0,0,0.2)';
+                ctx.fillRect(o.x+5, o.y+5, o.w-10, o.h-10);
+                ctx.fillStyle='#FF4500';
+            });
+
+            // Letters
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            letters.forEach(l => {
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath(); ctx.arc(l.x+20, l.y+20, 20, 0, Math.PI*2); ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#000';
+                ctx.fillText(l.char, l.x+20, l.y+22);
+            });
+
+            drawLincoln();
+            drawParticles();
 
             update();
-            animationId = requestAnimationFrame(loop);
+            requestAnimationFrame(drawGame);
         }
 
-        // --- Game Flow Control ---
+        // --- Game Flow ---
+
+        function initGame() {
+            AudioEngine.init(); // Must happen on user interaction
+            startGame();
+        }
 
         function startGame() {
             document.getElementById('screen-start').style.display = 'none';
@@ -501,24 +626,24 @@
             score = 0;
             car.health = 100;
             car.x = 50;
-            gameSpeed = 5;
+            gameSpeed = 6;
             obstacles = [];
             letters = [];
+            particles = [];
             collectedLettersString = "";
             startTime = Date.now();
             frames = 0;
             
-            loop();
+            AudioEngine.startBeat();
+            drawGame();
         }
 
         function gameOver() {
             gameState = 'GAMEOVER';
-            cancelAnimationFrame(animationId);
-            
+            AudioEngine.stopBeat();
             document.getElementById('screen-gameover').style.display = 'flex';
             document.getElementById('controls').style.display = 'none';
-            
-            document.getElementById('end-time').innerText = timeSurvived;
+            document.getElementById('end-time').innerText = ((Date.now() - startTime)/1000).toFixed(1);
             document.getElementById('end-score').innerText = score;
             document.getElementById('end-collection').innerText = collectedLettersString;
         }
@@ -526,7 +651,6 @@
         function resetGame() {
             startGame();
         }
-
     </script>
 </body>
 </html>
